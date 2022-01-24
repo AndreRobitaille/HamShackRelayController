@@ -58,6 +58,7 @@ class Relay_Control_Window(Gtk.Window):
         grid = Gtk.Grid()
         self.add(grid)
         self.fullscreen()
+        self.apply_css()
 
         button100 = Gtk.ToggleButton(label="Normal\nShutdown")
         grid.add(button100)
@@ -555,6 +556,5 @@ class Relay_Control_Window(Gtk.Window):
 
 win = Relay_Control_Window()
 win.connect("delete-event", Gtk.main_quit)
-win.apply_css()
 win.show_all()
 Gtk.main()
