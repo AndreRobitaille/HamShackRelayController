@@ -50,7 +50,7 @@ RELAY.relayON(1, 3)
 
 
 class Relay_Control_Window(Gtk.Window):
-"""Uber class that contains everything"""
+    """Uber class that contains everything"""
 
     def __init__(self):
         """Builds the view window and buttons"""
