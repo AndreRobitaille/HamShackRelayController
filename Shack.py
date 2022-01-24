@@ -11,8 +11,7 @@ pygame.mixer.init()
 pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
 RELAY.getID(0)
 
-Relay Key:
-#
+# Relay Key:
 # 0,1 Left Speaker Mute
 # 0,2 Right Speaker Mute
 # 0,3 Auxiliary Devices
