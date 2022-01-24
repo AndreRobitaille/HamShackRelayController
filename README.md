@@ -1,9 +1,5 @@
 # HamShackRelayController
 
-Name
-==============
-Ham Shack Relay Controller
-
 Description
 ==============
 Scott's GTK Python program for turning on/off relays for his ham radio shack using a Raspberry Pi and relay hats.
