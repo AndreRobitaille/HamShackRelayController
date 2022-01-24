@@ -8,7 +8,7 @@ import pygame
 
 # Pygame for audio
 pygame.mixer.init()
-pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+pygame.mixer.music.load("Sounds/click.wav")
 RELAY.getID(0)
 
 # Relay Key:
@@ -144,7 +144,7 @@ class Relay_Control_Window(Gtk.Window):
         while pygame.mixer.music.get_busy() == True:
                 continue
         pygame.mixer.music.play()
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         if button100.get_active():
             # Relays Off in one second intervals
             RELAY.relayOFF(0, 3)
@@ -171,7 +171,7 @@ class Relay_Control_Window(Gtk.Window):
             time.sleep(0.5)
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+            pygame.mixer.music.load("Sounds/completed.wav")
             pygame.mixer.music.play()
             RELAY.relayOFF(0, 1)
             RELAY.relayOFF(0, 2)
@@ -192,7 +192,7 @@ class Relay_Control_Window(Gtk.Window):
             time.sleep(1)
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             pygame.mixer.music.play()
             RELAY.relayON(1, 3)
             time.sleep(1)
@@ -216,7 +216,7 @@ class Relay_Control_Window(Gtk.Window):
             time.sleep(1)
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+            pygame.mixer.music.load("Sounds/completed.wav")
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy() == True:
                 continue
@@ -227,7 +227,7 @@ class Relay_Control_Window(Gtk.Window):
     def on_button_toggled120(self, button120, name):
         """Full Shutdown - turn off all relays"""
         if button120.get_active():
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             pygame.mixer.music.play()
             RELAY.relayOFF(0, 3)
             time.sleep(0.5)
@@ -252,7 +252,7 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayOFF(1, 3)
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+            pygame.mixer.music.load("Sounds/completed.wav")
             pygame.mixer.music.play()
             RELAY.relayOFF(0, 1)
             RELAY.relayOFF(0, 2)
@@ -267,7 +267,7 @@ class Relay_Control_Window(Gtk.Window):
         if button130.get_active():
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             pygame.mixer.music.play()
             RELAY.relayOFF(0, 1)
             RELAY.relayOFF(0, 2)
@@ -276,7 +276,7 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayON(0, 2)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy() == True:
                 continue
@@ -287,14 +287,14 @@ class Relay_Control_Window(Gtk.Window):
         if button140.get_active():
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             pygame.mixer.music.play()
             RELAY.relayTOGGLE(1, 3)
         else:
             RELAY.relayTOGGLE(1, 3)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled150(self, button150, name):
@@ -306,26 +306,26 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayON(0, 2)
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             pygame.mixer.music.play()
         else:
             while pygame.mixer.music.get_busy() == True:
                 continue
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             pygame.mixer.music.play()
             RELAY.relayOFF(0, 1)
             RELAY.relayOFF(0, 2)
             RELAY.relayOFF(1, 5)
         while pygame.mixer.music.get_busy() == True:
                  continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled3(self, button4, name):
         """12VDC"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button4.get_active():
             RELAY.relayTOGGLE(1, 1)
@@ -333,14 +333,14 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(1, 1)
         while pygame.mixer.music.get_busy() == True:
             continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled4(self, button4, name):
         """Dual Monitor"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button4.get_active():
             RELAY.relayTOGGLE(1, 2)
@@ -348,14 +348,14 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(1, 2)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled5(self, button5, name):
         """Palstar HF-Auto Tuner"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button5.get_active():
             RELAY.relayTOGGLE(0, 3)
@@ -363,14 +363,14 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(0, 3)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled6(self, button6, name):
         """Aux Devices: LP500, MFJ ant switch, bias-T, fans"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button6.get_active():
             RELAY.relayTOGGLE(0, 5)
@@ -379,14 +379,14 @@ class Relay_Control_Window(Gtk.Window):
 
         while pygame.mixer.music.get_busy() == True:
             continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled7(self, button7, name):
         """HF-1 Yaesu 101MP"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button7.get_active():
             RELAY.relayTOGGLE(1, 4)
@@ -394,7 +394,7 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayOFF(1, 4)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled8(self, button8, name):
@@ -402,21 +402,21 @@ class Relay_Control_Window(Gtk.Window):
         while pygame.mixer.music.get_busy() == True:
                 continue
         pygame.mixer.music.play()
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         if button8.get_active():
             RELAY.relayTOGGLE(0, 6)
         else:
             RELAY.relayTOGGLE(0, 6)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled9(self, button9, name):
         """VHF - UHF Yaesu 7900"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button9.get_active():
             RELAY.relayTOGGLE(0, 4)
@@ -424,12 +424,12 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(0, 4)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled11(self, button11, name):
         """not used"""
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button11.get_active():
             RELAY.relayTOGGLE(1, 6)
@@ -437,14 +437,14 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(1, 6)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled10(self, button10, name):
         """Ameritron Amplifier"""
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button10.get_active():
             RELAY.relayTOGGLE(0, 7)
@@ -452,7 +452,7 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(0, 7)
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled12(self, button12, name):
@@ -460,20 +460,20 @@ class Relay_Control_Window(Gtk.Window):
         pygame.mixer.music.play()
         if button12.get_active():
             pygame.mixer.music.play()
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
 #           RELAY.relayON(0, 0)
         else:
 #           RELAY.relayOFF(0, 0)
           while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled13(self, button13, name):
         """not used"""
         while pygame.mixer.music.get_busy() == True:
               continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         if button13.get_active():
             RELAY.relayTOGGLE(1, 7)
@@ -481,7 +481,7 @@ class Relay_Control_Window(Gtk.Window):
             RELAY.relayTOGGLE(1, 7)
         while pygame.mixer.music.get_busy() == True:
               continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
 
     def on_button_toggled14(self, button14, name):
@@ -489,7 +489,7 @@ class Relay_Control_Window(Gtk.Window):
         pygame.mixer.music.play()
         if button14.get_active():
             pygame.mixer.music.play()
-            pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+            pygame.mixer.music.load("Sounds/click.wav")
             RELAY.relayTOGGLE(0, 4)
         else:
             RELAY.relayTOGGLE(0, 4)
@@ -499,7 +499,7 @@ class Relay_Control_Window(Gtk.Window):
         while pygame.mixer.music.get_busy() == True:
                 continue
         pygame.mixer.music.play()
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         if button15.get_active():
             RELAY.relayOFF(0, 3)
             time.sleep(0.5)
@@ -529,13 +529,13 @@ class Relay_Control_Window(Gtk.Window):
             print("Button 15-2")
         while pygame.mixer.music.get_busy() == True:
                 continue
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/completed.wav")
+        pygame.mixer.music.load("Sounds/completed.wav")
         pygame.mixer.music.play()
         SYSTEM.system("sudo halt")
 
     def on_button_toggled16(self, button16, state):
         """Button 16 Exit to OS"""
-        pygame.mixer.music.load("/home/pi/Documents/PythonApps/Sounds/click.wav")
+        pygame.mixer.music.load("Sounds/click.wav")
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy() == True:
                 continue
