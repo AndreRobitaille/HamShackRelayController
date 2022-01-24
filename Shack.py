@@ -139,6 +139,16 @@ class Relay_Control_Window(Gtk.Window):
         grid.attach_next_to(button16, button15, Gtk.PositionType.RIGHT, 1, 1)
         button16.connect("toggled", self.on_button_toggled16, "16")
 
+    def apply_css(self):
+        """Set styles from CSS file to main window."""
+        css_provider = Gtk.CssProvider()
+        try:
+            css_provider.load_from_path('controlWindowStyle.css')
+            context = Gtk.StyleContext()
+            context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+        except GLib.Error as e:
+            print(f"Error in CSS theme: {e} ")
+
     def on_button_toggled100(self, button100, name):
         """Normal Shutdown - turn off all power relays"""
         while pygame.mixer.music.get_busy() == True:
@@ -545,5 +555,6 @@ class Relay_Control_Window(Gtk.Window):
 
 win = Relay_Control_Window()
 win.connect("delete-event", Gtk.main_quit)
+win.apply_css()
 win.show_all()
 Gtk.main()
