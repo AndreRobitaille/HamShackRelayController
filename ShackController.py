@@ -1,3 +1,4 @@
+from ast import match_case
 import sys
 import time
 import gi
@@ -31,18 +32,18 @@ suppressSounds = False  # Avoids playing UI sounds when true.
 
 
 # Create arrays for each relay (plate address, relay address)
-leftSpeakerMute = 0, 1
-rightSpeakerMute = 0, 2
-auxDevices = 0, 3
-yaesu7900 = 0, 4
-thermalControl = 0, 5
-icom7300 = 0, 6
-ameritron = 0, 7
-powerSupply = 1, 1
-dualMonitor = 1, 2
-lights = 1, 3
-yaesu101 = 1, 4
-audioSystem = 1, 5
+leftSpeakerMuteRelay = 0, 1
+rightSpeakerMuteRelay = 0, 2
+auxDevicesRelay = 0, 3
+yaesu7900Relay = 0, 4
+thermalControlRelay = 0, 5
+icom7300Relay = 0, 6
+ameritronRelay = 0, 7
+powerSupplyRelay = 1, 1
+dualMonitorRelay = 1, 2
+lightsRelay = 1, 3
+yaesu101Relay = 1, 4
+audioSystemRelay = 1, 5
 # 1,6 unused
 # 1,7 unused
 
@@ -206,6 +207,7 @@ class ControlWindow(Gtk.Window):
         self.add(grid)
         syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
 
+        self.lightsButton.set_active(True) # Turn on the lights on startup.
 
     def on_button_toggled(self, button, buttonName):
         """Button was toggled. Figure out which button and do something."""
@@ -220,11 +222,23 @@ class ControlWindow(Gtk.Window):
             state = "off"
         
 #        if isinstance(relayName, str):
-        if buttonName == "muteAudio":
-            if button.get_active():
-                self.mute_audio()
-            else:
-                self.unmute_audio()
+        match buttonName:
+            case "muteAudio":
+                if button.get_active():
+                    self.mute_audio()
+                else:
+                    self.unmute_audio()
+            case "lights":
+                if button.get_active():
+                    self.turn_lights_on()
+                else:
+                    self.turn_lights_off()
+
+#        if buttonName == "muteAudio":
+#            if button.get_active():
+#                self.mute_audio()
+#            else:
+#                self.unmute_audio()
 
         #self.play_sound(completedSound) #This should play after doing something, 
                                          #not after button press.
@@ -246,10 +260,30 @@ class ControlWindow(Gtk.Window):
         if buttonName == "exitToOs":
             sys.exit()
 
-    def perform_normal_shutdown(self):
-        """Normal Shutdown - turn off all power relays with time delay."""
+    def turn_lights_on():
+        """Turn on the lights"""
+        #RELAY.relayON(*lightsRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Lights were turned on")
+
+
+    def turn_lights_off():
+        """Turn off the lights"""
+        #RELAY.relayOFF(*lightsRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Lights were turned off")
+
+    def mute_audio(self):
+        """Mute audio on left and right channels. Relays off."""
         #shutoff relays here
-        syslog.syslog(syslog.LOG_INFO, "Completed normal shutdown")
+        # off 0,1
+        # off 0,2
+    
+    def unmute_audio(self):
+        """Unmute audio on left and right channels. Relays on."""
+        #turn on relays here
+        # on 0,1
+        # on 0,2
 
     def perform_power_up(self):
         """Power up all the normal systems."""
@@ -318,17 +352,10 @@ class ControlWindow(Gtk.Window):
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, "Completed auto power up")
 
-    def mute_audio(self):
-        """Mute audio on left and right channels. Relays off."""
+    def perform_normal_shutdown(self):
+        """Normal Shutdown - turn off all power relays with time delay."""
         #shutoff relays here
-        # off 0,1
-        # off 0,2
-    
-    def unmute_audio(self):
-        """Unmute audio on left and right channels. Relays on."""
-        #turn on relays here
-        # on 0,1
-        # on 0,2
+        syslog.syslog(syslog.LOG_INFO, "Completed normal shutdown")
 
     def play_sound(self, sound):
         """Plays a sound using pygame but don't wait before moving on."""
