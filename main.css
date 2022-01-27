@@ -1,0 +1,22 @@
+button {
+  background-color: LightBlue;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+}
+
+button:hover:active {
+  background-color: Maroon;
+  -webkit-box-shadow: inset 0px 0px 3px #303030;
+     -mox-box-shadow: inset 0px 0px 3px #303030;
+          box-shadow: inset 0px 0px 3px #303030;
+  outline: none;
+}
+
+button:checked {
+  background-color: LightCoral;
+  -webkit-box-shadow: inset 0px 0px 3px #303030;
+     -mox-box-shadow: inset 0px 0px 3px #303030;
+          box-shadow: inset 0px 0px 3px #303030;
+  outline: none;
+}
