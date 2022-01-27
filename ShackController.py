@@ -6,6 +6,15 @@ from gi.repository import Gtk, Gdk
 import pygame
 #import piplates.RELAYplate as RELAY
 import threading
+import syslog
+
+# Logging goes to /var/log/messages
+# Change level as necessary: DEBUG, INFO, WARNING, ERROR, CRITICAL
+# Anything below DEBUG needs to edit /etc/rsyslog.d/50-default.conf
+# and uncomment the debug section, then restart the syslog service:
+#   sudo service rsyslog restart
+
+syslog.setlogmask(syslog.LOG_UPTO(syslog.LOG_INFO))
 
 
 # Initalize the pygame mixer for sounds. Doing it in this
@@ -15,8 +24,11 @@ pygame.mixer.init()
 pygame.init()
 clickSound = pygame.mixer.Sound("Sounds/click.wav")
 completedSound = pygame.mixer.Sound("Sounds/completed.wav")
+syslog.syslog(syslog.LOG_INFO, "Pygame initialized and sounds loaded")
+
 global suppressSounds
-suppressSounds = False #Avoids playing UI sounds when true.
+suppressSounds = False  # Avoids playing UI sounds when true.
+
 
 # Relay Arrays
 leftSpeakerMute = 0, 1
@@ -34,16 +46,20 @@ audioSystem = 1, 5
 # 1,6 unused
 # 1,7 unused
 
+
 # Plate addresses
 plate12vdc = 0
 plate120vac = 1
-allPlates = 2 #Not really. This must be manually translated in the method.
+allPlates = 2   # Not really 2. This must be manually translated in the method.
+
 
 # Check that relay plates are working or fail.
 #if RELAY.getADDR(plate12vdc) != plate12vdc:
-#    quit()
+#    syslog.syslog(syslog.LOG_ERROR, "12vcd relay plate not responding.")
+#    sys.exit()
 #if RELAY.getADDR(plate120vac) != plate120vac:
-#    quit()
+#    syslog.syslog(syslog.LOG_ERROR, "120vac relay plate not responding.")
+#    sys.exit()
 
 
 class RelayShim: 
