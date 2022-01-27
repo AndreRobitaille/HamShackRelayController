@@ -30,7 +30,7 @@ global suppressSounds
 suppressSounds = False  # Avoids playing UI sounds when true.
 
 
-# Relay Arrays
+# Create arrays for each relay (plate address, relay address)
 leftSpeakerMute = 0, 1
 rightSpeakerMute = 0, 2
 auxDevices = 0, 3
@@ -255,7 +255,8 @@ class ControlWindow(Gtk.Window):
         """Power up all the normal systems."""
         global suppressSounds
         suppressSounds = True #Supress sounds; we're about to press buttons.
-        time.sleep(.4)        #Wait for sound to finish before pushing buttons.
+        while pygame.mixer.get_busy():  #Click sound needs to finish.
+            continue
 
         #turn on relays here
         #1,5 audio - button down
