@@ -8,12 +8,12 @@ import pygame
 import threading
 import syslog
 
+
 # Logging goes to /var/log/messages
 # Change level as necessary: DEBUG, INFO, WARNING, ERROR, CRITICAL
 # Anything below DEBUG needs to edit /etc/rsyslog.d/50-default.conf
 # and uncomment the debug section, then restart the syslog service:
 #   sudo service rsyslog restart
-
 syslog.setlogmask(syslog.LOG_UPTO(syslog.LOG_INFO))
 
 
@@ -67,15 +67,20 @@ class RelayShim:
 
     def immediate_shutoff(self, plate):
         """Something is wrong or we want to initalize plates."""
-        if plate < 2:
+        if plate < 2:                   # Not both plates
             RELAY.RESET(plate)
-        elif plate == 2:
+            syslog.syslog(syslog.LOG_INFO, f"Plate {plate} relays shut off")
+
+        elif plate == 2:                # Both plates
             RELAY.RESET(plate12vdc)
             RELAY.RESET(plate120vac)
-        else:                           #Must be emergency. Kill everything.
+            syslog.syslog(syslog.LOG_INFO, f"Relays on both plates shut off")
+
+        else:                           # Not used, but could be an emergency
+                                        # kill everything and quit button.
             RELAY.RESET(plate12vdc)
             RELAY.RESET(plate120vac)
-            quit()
+            sys.exit()
 
 
 class ControlWindow(Gtk.Window):
@@ -86,12 +91,11 @@ class ControlWindow(Gtk.Window):
         super().__init__(title="Shack System Controller")
 
         self.apply_css()
-        
         self.set_border_width(10)
 
+        # Grid creation and button placement
         grid = Gtk.Grid()
         
-        # Button creation.
         normalShutdownButton = Gtk.Button(label="Normal\nShutdown")
         normalShutdownButton.connect("clicked", self.on_button_clicked, 
                                      "normalShutdown")
@@ -188,7 +192,6 @@ class ControlWindow(Gtk.Window):
         grid.attach_next_to(extraRelay4Button, extraRelay3Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
 
-
         fullSystemShutdownButton = Gtk.Button(label="Full\nSystem\nShutdown")
         fullSystemShutdownButton.connect("clicked", self.on_button_clicked, 
                                          "fullSystemShutdown")
@@ -201,11 +204,13 @@ class ControlWindow(Gtk.Window):
                             Gtk.PositionType.RIGHT, 1, 1)
 
         self.add(grid)
+        syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
+
 
     def on_button_toggled(self, button, buttonName):
         """Button was toggled. Figure out which button and do something."""
         if suppressSounds != True:
-            time.sleep(0.6) #Wait for the click sound to be ready to play.
+            time.sleep(0.6) # Wait for the click sound to be ready to play.
             self.play_sound(clickSound)
         if button.get_active():
 #            RELAY.relayON(relayName)
@@ -223,6 +228,9 @@ class ControlWindow(Gtk.Window):
 
         #self.play_sound(completedSound) #This should play after doing something, 
                                          #not after button press.
+        syslog.syslog(syslog.LOG_DEBUG, f"Button {buttonName} was turned {state}")
+
+        # get rid of this soon
         print("Button", buttonName, "was turned", state)
 
     def on_button_clicked(self, button, buttonName):
@@ -241,7 +249,7 @@ class ControlWindow(Gtk.Window):
     def perform_normal_shutdown(self):
         """Normal Shutdown - turn off all power relays with time delay."""
         #shutoff relays here
-        print("Completed normal shutdown")
+        syslog.syslog(syslog.LOG_INFO, "Completed normal shutdown")
 
     def perform_power_up(self):
         """Power up all the normal systems."""
@@ -307,7 +315,7 @@ class ControlWindow(Gtk.Window):
        
         suppressSounds = False #Play sounds again now that we're done pressing buttons.
         self.play_sound(completedSound)
-        print("Completed auto power up")
+        syslog.syslog(syslog.LOG_INFO, "Completed auto power up")
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
@@ -325,7 +333,7 @@ class ControlWindow(Gtk.Window):
         """Plays a sound using pygame but don't wait before moving on."""
         global suppressSounds
         if suppressSounds:
-            return #We've said somewhere to not play audio at this time. 
+            return  # We've said somewhere to not play audio at this time. 
         while pygame.mixer.get_busy():
             continue
         pygame.mixer.Sound.play(sound)
@@ -339,9 +347,9 @@ class ControlWindow(Gtk.Window):
             context = Gtk.StyleContext()
             context.add_provider_for_screen(screen, css_provider,
                                             Gtk.STYLE_PROVIDER_PRIORITY_USER)
-            print(f"Applied CSS.")
+            syslog.syslog(syslog.LOG_INFO, "CSS applied")
         except GLib.Error as e:
-            print(f"Error in theme: {e} ")
+            syslog.syslog(syslog.LOG_ERROR, f"CSS application failed {e}")
 
 
 win = ControlWindow()
