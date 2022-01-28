@@ -254,6 +254,48 @@ class ControlWindow(Gtk.Window):
             else:
                 self.turn_off_dual_monitor()
 
+        if buttonName == "powerSupply":
+            if button.get_active():
+                self.turn_on_power_supply()
+            else:
+                self.turn_off_power_supply()
+
+        if buttonName == "auxDevices":
+            if button.get_active():
+                self.turn_on_aux_devices()
+            else:
+                self.turn_off_aux_devices()
+
+        if buttonName == "thermalControl":
+            if button.get_active():
+                self.turn_on_thermal_control()
+            else:
+                self.turn_off_thermal_control()
+
+        if buttonName == "yaesu101":
+            if button.get_active():
+                self.turn_on_aux_devices()
+            else:
+                self.turn_off_aux_devices()
+
+        if buttonName == "icom7300":
+            if button.get_active():
+                self.turn_on_aux_devices()
+            else:
+                self.turn_off_aux_devices()
+
+        if buttonName == "yaesu7900":
+            if button.get_active():
+                self.turn_on_aux_devices()
+            else:
+                self.turn_off_aux_devices()
+
+        if buttonName == "ameritron":
+            if button.get_active():
+                self.turn_on_ameritron()
+            else:
+                self.turn_off_ameritron()
+
         #self.play_sound(completedSound) #This should play after doing something, 
                                          #not after button press.
         syslog.syslog(syslog.LOG_DEBUG, f"Button {buttonName} was turned {state}")
@@ -267,9 +309,16 @@ class ControlWindow(Gtk.Window):
             time.sleep(0.6) #Wait for the click sound to be ready to play.
             self.play_sound(clickSound)
         if buttonName == "normalShutdown":
-            self.perform_normal_shutdown()
+            buttonThread = threading.Thread(target=self.perform_normal_shutdown, args=())
+            buttonThread.start()
         if buttonName == "autoPowerUp":
             buttonThread = threading.Thread(target=self.perform_power_up, args=())
+            buttonThread.start()
+        if buttonName == "fullShutdown":
+            buttonThread = threading.Thread(target=self.perform_full_shutdown, args=())
+            buttonThread.start()
+        if buttonName == "fullSystemShutdown":
+            buttonThread = threading.Thread(target=self.perform_full_system_shutdown, args=())
             buttonThread.start()
         if buttonName == "exitToOs":
             sys.exit()
@@ -335,6 +384,18 @@ class ControlWindow(Gtk.Window):
         #RELAY.relayON(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Left and right audio was unmuted")
+
+    def turn_on_ameritron(self):
+        """Turn on the Ameritron amplifier."""
+        #RELAY.relayON(*ameritronRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned on")
+
+    def turn_off_ameritron(self):
+        """Turn off the Ameritron amplifier."""
+        #RELAY.relayOFF(*ameritronReplay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned off")
 
     def perform_power_up(self):
         """Power up all the normal systems."""
