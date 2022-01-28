@@ -53,15 +53,6 @@ plate120vac = 1
 allPlates = 2   # Not really 2. This must be manually translated in the method.
 
 
-# Check that relay plates are working or fail.
-#if RELAY.getADDR(plate12vdc) != plate12vdc:
-#    syslog.syslog(syslog.LOG_ERROR, "12vcd relay plate not responding.")
-#    sys.exit()
-#if RELAY.getADDR(plate120vac) != plate120vac:
-#    syslog.syslog(syslog.LOG_ERROR, "120vac relay plate not responding.")
-#    sys.exit()
-
-
 class RelayShim: 
     """Class to extend Pi-Plates relay functionality"""
 
@@ -81,6 +72,23 @@ class RelayShim:
             RELAY.RESET(plate12vdc)
             RELAY.RESET(plate120vac)
             sys.exit()
+
+
+class TerminationWindow(Gtk.Window):
+    def __init__(self):
+        super().__init__(title="Application Error")
+
+    def create_error_window(self, errorMessage):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.CLOSE,
+            text="Program Must Terminate",
+        )
+        dialog.format_secondary_text(errorMessage)
+        dialog.run()
+        dialog.destroy()
 
 
 class ControlWindow(Gtk.Window):
@@ -210,6 +218,7 @@ class ControlWindow(Gtk.Window):
         suppressSounds = True #Turn on the lights on startup, but quietly.
         self.lightsButton.set_active(True)
         suppressSounds = False
+
 
 
     def on_button_toggled(self, button, buttonName):
@@ -549,7 +558,32 @@ class ControlWindow(Gtk.Window):
                                             Gtk.STYLE_PROVIDER_PRIORITY_USER)
             syslog.syslog(syslog.LOG_INFO, "CSS applied")
         except GLib.Error as e:
-            syslog.syslog(syslog.LOG_ERROR, f"CSS application failed {e}")
+            syslog.syslog(syslog.LOG_ERR, f"CSS application failed {e}")
+
+
+# Test code for relay board fail.
+#testRelayAddressError = 3
+#if RELAY.getADDR(plate12vdc) != plate12vdc && if RELAY.getADDR(plate120vac) != plate120vac:
+#if testRelayAddressError == 0:
+#    errorDialogMessage = ("Can't start application. Neither relay plate is responding,")
+#    errorWin = TerminationWindow()
+#    errorWin.create_error_window(errorDialogMessage)
+#    syslog.syslog(syslog.LOG_ERR, "Neither relay plate is responding - terminating program")
+#    sys.exit()
+#if RELAY.getADDR(plate120vac) != plate120vac:
+#elif testRelayAddressError == 2:
+#    errorDialogMessage = ("Can't start application. 120VAC relay plate not responding,")
+#    errorWin = TerminationWindow()
+#    errorWin.create_error_window(errorDialogMessage)
+#    syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
+#    sys.exit()
+#if RELAY.getADDR(plate120vac) != plate120vac:
+#elif testRelayAddressError == 3:
+#    errorDialogMessage = ("Can't start application. 12VDC relay plate not responding,")
+#    errorWin = TerminationWindow()
+#    errorWin.create_error_window(errorDialogMessage)
+#    syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
+#    sys.exit()
 
 
 win = ControlWindow()
