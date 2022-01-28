@@ -397,6 +397,18 @@ class ControlWindow(Gtk.Window):
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned off")
 
+    def turn_on_auxDevices(self):
+        """Turn on the auxilary devices."""
+        #RELAY.relayON(*auxDevicesRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned on")
+
+    def turn_off_auxDevices(self):
+        """Turn off the auxilary devices."""
+        #RELAY.relayOFF(*auxDevicesRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned off")
+
     def perform_power_up(self):
         """Power up all the normal systems."""
         global suppressSounds
