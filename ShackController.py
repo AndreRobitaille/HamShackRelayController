@@ -248,6 +248,12 @@ class ControlWindow(Gtk.Window):
             else:
                 self.turn_off_power_supply()
 
+        if buttonName == "dualMonitor":
+            if button.get_active():
+                self.turn_on_dual_monitor()
+            else:
+                self.turn_off_dual_monitor()
+
         #self.play_sound(completedSound) #This should play after doing something, 
                                          #not after button press.
         syslog.syslog(syslog.LOG_DEBUG, f"Button {buttonName} was turned {state}")
@@ -303,6 +309,18 @@ class ControlWindow(Gtk.Window):
         #RELAY.relayOFF(*powerSupplyRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"12VDC power supply was turned off")
+
+    def turn_on_dual_monitor(self):
+        """Turn on the dual monitor."""
+        #RELAY.relayON(*dualMonitorRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Dual monitor was turned on")
+
+    def turn_off_dual_monitor(self):
+        """Turn off the dual monitor."""
+        #RELAY.relayOFF(*dualMonitorRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Dual monitor was turned off")
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
