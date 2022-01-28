@@ -187,7 +187,7 @@ class ControlWindow(Gtk.Window):
         grid.attach_next_to(self.ameritronButton, self.powerSupplyButton, 
                             Gtk.PositionType.BOTTOM, 1, 1)
 
-        # Extra buttons to fit the original layout.
+        #Extra buttons to fit the original layout.
         extraRelay1Button = Gtk.Button()
         grid.attach_next_to(extraRelay1Button, self.ameritronButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
@@ -204,7 +204,6 @@ class ControlWindow(Gtk.Window):
         grid.attach_next_to(extraRelay4Button, extraRelay3Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
         extraRelay4Button.set_sensitive(False)
-
 
         fullSystemShutdownButton = Gtk.Button(label="Full\nSystem\nShutdown")
         fullSystemShutdownButton.connect("clicked", self.on_button_clicked, 

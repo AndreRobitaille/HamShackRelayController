@@ -20,3 +20,8 @@ button:checked {
           box-shadow: inset 0px 0px 3px #303030;
   outline: none;
 }
+
+button:disabled {
+  background-color: DarkGrey;
+  outline: none;
+}
