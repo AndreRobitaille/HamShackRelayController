@@ -221,24 +221,17 @@ class ControlWindow(Gtk.Window):
 #            RELAY.relayOFF(relayName)
             state = "off"
         
-#        if isinstance(relayName, str):
-        match buttonName:
-            case "muteAudio":
-                if button.get_active():
-                    self.mute_audio()
-                else:
-                    self.unmute_audio()
-            case "lights":
-                if button.get_active():
-                    self.turn_lights_on()
-                else:
-                    self.turn_lights_off()
+        if buttonName == "lights":
+            if button.get_active():
+                self.turn_lights_on()
+            else:
+                self.turn_lights_off()
 
-#        if buttonName == "muteAudio":
-#            if button.get_active():
-#                self.mute_audio()
-#            else:
-#                self.unmute_audio()
+        if buttonName == "muteAudio":
+            if button.get_active():
+                self.mute_audio()
+            else:
+                self.unmute_audio()
 
         #self.play_sound(completedSound) #This should play after doing something, 
                                          #not after button press.
