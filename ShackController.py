@@ -226,15 +226,21 @@ class ControlWindow(Gtk.Window):
         
         if buttonName == "lights":
             if button.get_active():
-                self.turn_lights_on()
+                self.turn_on_lights()
             else:
-                self.turn_lights_off()
+                self.turn_off_lights()
 
         if buttonName == "muteAudio":
             if button.get_active():
                 self.mute_audio()
             else:
                 self.unmute_audio()
+
+        if buttonName == "audioSystem":
+            if button.get_active():
+                self.turn_on_audio_system()
+            else:
+                self.turn_off_audio_system()
 
         #self.play_sound(completedSound) #This should play after doing something, 
                                          #not after button press.
@@ -256,17 +262,29 @@ class ControlWindow(Gtk.Window):
         if buttonName == "exitToOs":
             sys.exit()
 
-    def turn_lights_on(self):
-        """Turn on the lights"""
+    def turn_on_lights(self):
+        """Turn on the lights."""
         #RELAY.relayON(*lightsRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Lights were turned on")
 
-    def turn_lights_off(self):
-        """Turn off the lights"""
+    def turn_off_lights(self):
+        """Turn off the lights."""
         #RELAY.relayOFF(*lightsRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Lights were turned off")
+
+    def turn_on_audio_system(self):
+        """Turn on the audio system."""
+        #RELAY.relayON(*audioSystemRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Audio system was turned on")
+
+    def turn_off_audio_system(self):
+        """Turn off the audio system."""
+        #RELAY.relayOFF(*audioSystemRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Audio system was turned off")
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
