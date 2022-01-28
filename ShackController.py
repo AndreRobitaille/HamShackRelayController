@@ -1,4 +1,3 @@
-from ast import match_case
 import sys
 import time
 import gi
@@ -207,7 +206,11 @@ class ControlWindow(Gtk.Window):
         self.add(grid)
         syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
 
-        self.lightsButton.set_active(True) # Turn on the lights on startup.
+        global suppressSounds
+        suppressSounds = True #Turn on the lights on startup, but quietly.
+        self.lightsButton.set_active(True)
+        suppressSounds = False
+
 
     def on_button_toggled(self, button, buttonName):
         """Button was toggled. Figure out which button and do something."""
@@ -253,14 +256,13 @@ class ControlWindow(Gtk.Window):
         if buttonName == "exitToOs":
             sys.exit()
 
-    def turn_lights_on():
+    def turn_lights_on(self):
         """Turn on the lights"""
         #RELAY.relayON(*lightsRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Lights were turned on")
 
-
-    def turn_lights_off():
+    def turn_lights_off(self):
         """Turn off the lights"""
         #RELAY.relayOFF(*lightsRelay)
         self.play_sound(completedSound)
