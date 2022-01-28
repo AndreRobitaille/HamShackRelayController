@@ -173,6 +173,7 @@ class ControlWindow(Gtk.Window):
                                     "icom7300")
         grid.attach_next_to(self.icom7300Button, self.yaesu101Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        self.icom7300Button.set_sensitive(False) # Disable Icom 7300 button
 
         self.yaesu7900Button = Gtk.ToggleButton(label="VHF\nYaesu\n7900")
         self.yaesu7900Button.connect("toggled", self.on_button_toggled, 
@@ -190,15 +191,20 @@ class ControlWindow(Gtk.Window):
         extraRelay1Button = Gtk.Button()
         grid.attach_next_to(extraRelay1Button, self.ameritronButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        extraRelay1Button.set_sensitive(False)
         extraRelay2Button = Gtk.Button()
         grid.attach_next_to(extraRelay2Button, extraRelay1Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        extraRelay2Button.set_sensitive(False)
         extraRelay3Button = Gtk.Button()
         grid.attach_next_to(extraRelay3Button, extraRelay2Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        extraRelay3Button.set_sensitive(False)
         extraRelay4Button = Gtk.Button()
         grid.attach_next_to(extraRelay4Button, extraRelay3Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        extraRelay4Button.set_sensitive(False)
+
 
         fullSystemShutdownButton = Gtk.Button(label="Full\nSystem\nShutdown")
         fullSystemShutdownButton.connect("clicked", self.on_button_clicked, 
@@ -283,21 +289,21 @@ class ControlWindow(Gtk.Window):
 
         if buttonName == "yaesu101":
             if button.get_active():
-                self.turn_on_aux_devices()
+                self.turn_on_yaesu_101()
             else:
-                self.turn_off_aux_devices()
+                self.turn_off_yaesu_101()
 
         if buttonName == "icom7300":
             if button.get_active():
-                self.turn_on_aux_devices()
+                self.turn_on_icom_7300()
             else:
-                self.turn_off_aux_devices()
+                self.turn_off_icom_7300()
 
         if buttonName == "yaesu7900":
             if button.get_active():
-                self.turn_on_aux_devices()
+                self.turn_on_yaesu_7900()
             else:
-                self.turn_off_aux_devices()
+                self.turn_off_yaesu_7900()
 
         if buttonName == "ameritron":
             if button.get_active():
@@ -406,61 +412,61 @@ class ControlWindow(Gtk.Window):
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned off")
 
-    def turn_on_auxDevices(self):
+    def turn_on_aux_devices(self):
         """Turn on the auxilary devices."""
         #RELAY.relayON(*auxDevicesRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned on")
 
-    def turn_off_auxDevices(self):
+    def turn_off_aux_devices(self):
         """Turn off the auxilary devices."""
         #RELAY.relayOFF(*auxDevicesRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned off")
 
-    def turn_on_thermalControl(self):
+    def turn_on_thermal_control(self):
         """Turn on the thermal control."""
         #RELAY.relayON(*thermalControlRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned on")
 
-    def turn_off_thermalControl(self):
+    def turn_off_thermal_control(self):
         """Turn off the thermal control."""
         #RELAY.relayOFF(*thermalControlRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned off")
 
-    def turn_on_yaesu101(self):
+    def turn_on_yaesu_101(self):
         """Turn on the Yaesu 101."""
         #RELAY.relayON(*yaesu101Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned on")
 
-    def turn_off_yaesu101(self):
+    def turn_off_yaesu_101(self):
         """Turn off the Yaesu 101."""
         #RELAY.relayOFF(*yaesu101Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned off")
 
-    def turn_on_icom7300(self):
+    def turn_on_icom_7300(self):
         """Turn on the Icom 7300."""
         #RELAY.relayON(*icom7300Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned on")
 
-    def turn_off_icom7300(self):
+    def turn_off_icom_7300(self):
         """Turn off the Icom 7300."""
         #RELAY.relayOFF(*icom7300Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned off")
 
-    def turn_on_yaesu7900(self):
+    def turn_on_yaesu_7900(self):
         """Turn on the Yaesu 7900."""
         #RELAY.relayON(*yaesu7900Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned on")
 
-    def turn_off_yaesu7900(self):
+    def turn_off_yaesu_7900(self):
         """Turn off the Yaesu 7900."""
         #RELAY.relayOFF(*yaesu7900Relay)
         self.play_sound(completedSound)
