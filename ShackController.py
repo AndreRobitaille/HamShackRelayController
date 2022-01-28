@@ -409,6 +409,18 @@ class ControlWindow(Gtk.Window):
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned off")
 
+    def turn_on_thermalControl(self):
+        """Turn on the thermal control."""
+        #RELAY.relayON(*thermalControlRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned on")
+
+    def turn_off_thermalControl(self):
+        """Turn off the thermal control."""
+        #RELAY.relayOFF(*thermalControlRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned off")
+
     def perform_power_up(self):
         """Power up all the normal systems."""
         global suppressSounds
