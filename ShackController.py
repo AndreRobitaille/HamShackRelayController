@@ -270,15 +270,17 @@ class ControlWindow(Gtk.Window):
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
-        #shutoff relays here
-        # off 0,1
-        # off 0,2
+        #RELAY.relayOFF(*leftSpeakerMuteRelay)
+        #RELAY.relayOFF(*rightSpeakerMuteRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Left and right audio was muted")
     
     def unmute_audio(self):
         """Unmute audio on left and right channels. Relays on."""
-        #turn on relays here
-        # on 0,1
-        # on 0,2
+        #RELAY.relayON(*leftSpeakerMuteRelay)
+        #RELAY.relayON(*rightSpeakerMuteRelay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Left and right audio was unmuted")
 
     def perform_power_up(self):
         """Power up all the normal systems."""
