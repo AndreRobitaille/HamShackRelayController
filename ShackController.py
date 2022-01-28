@@ -421,6 +421,42 @@ class ControlWindow(Gtk.Window):
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned off")
 
+    def turn_on_yaesu101(self):
+        """Turn on the Yaesu 101."""
+        #RELAY.relayON(*yaesu101Relay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned on")
+
+    def turn_off_yaesu101(self):
+        """Turn off the Yaesu 101."""
+        #RELAY.relayOFF(*yaesu101Relay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned off")
+
+    def turn_on_icom7300(self):
+        """Turn on the Icom 7300."""
+        #RELAY.relayON(*icom7300Relay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned on")
+
+    def turn_off_icom7300(self):
+        """Turn off the Icom 7300."""
+        #RELAY.relayOFF(*icom7300Relay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned off")
+
+    def turn_on_yaesu7900(self):
+        """Turn on the Yaesu 7900."""
+        #RELAY.relayON(*yaesu7900Relay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned on")
+
+    def turn_off_yaesu7900(self):
+        """Turn off the Yaesu 7900."""
+        #RELAY.relayOFF(*yaesu7900Relay)
+        self.play_sound(completedSound)
+        syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned off")
+
     def perform_power_up(self):
         """Power up all the normal systems."""
         global suppressSounds
