@@ -329,7 +329,7 @@ class ControlWindow(Gtk.Window):
             buttonThread = threading.Thread(target=self.perform_full_system_shutdown, args=())
             buttonThread.start()
         if buttonName == "exitToOs":
-            sys.exit()
+            self.exit_to_os()
 
     def turn_on_lights(self):
         """Turn on the lights."""
@@ -618,6 +618,9 @@ class ControlWindow(Gtk.Window):
         syslog.syslog(syslog.LOG_INFO, "Completed full system shutdown")
 
         SYSTEM.system("sudo halt")
+
+    def exit_to_os(self):
+        sys.exit()
 
     def play_sound(self, sound):
         """Plays a sound using pygame but don't wait before moving on."""
