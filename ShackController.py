@@ -4,7 +4,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 import pygame
-#import piplates.RELAYplate as RELAY
+import piplates.RELAYplate as RELAY
 import threading
 import syslog
 
@@ -27,7 +27,7 @@ completedSound = pygame.mixer.Sound("Sounds/completed.wav")
 syslog.syslog(syslog.LOG_INFO, "Pygame initialized and sounds loaded")
 
 global suppressSounds
-suppressSounds = False  # Avoids playing UI sounds when true.
+suppressSounds = True  # Avoids playing UI sounds when true. Start quietly.
 
 
 # Create arrays for each relay (plate address, relay address)
@@ -53,8 +53,18 @@ plate120vac = 1
 allPlates = 2   # Not really 2. This must be manually translated in the method.
 
 
+
 class RelayShim: 
     """Class to extend Pi-Plates relay functionality"""
+
+    def get_relay_state(self, relayAddress, relayPosition):
+        """Retreive and return the state of a specific relay"""
+
+        entirePlateState = f'{RELAY.relaySTATE(relayAddress):08b}'
+        relayPositionState = entirePlateState[relayPosition - 1]
+
+        return relayPositionState
+
 
     def immediate_shutoff(self, plate):
         """Something is wrong or we want to initalize plates."""
@@ -126,11 +136,18 @@ class ControlWindow(Gtk.Window):
                                      "muteAudio")
         grid.attach_next_to(self.muteAudioButton, fullShutdownButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        # weird one to check state becuase there areo two of them
+        # and the state is the opposite of what you'd expect
+        #buttonRelayState = RelayShim.get_relay_state(*lightsRelaYy)
 
         self.lightsButton = Gtk.ToggleButton(label="Lights")
         self.lightsButton.connect("toggled", self.on_button_toggled, "lights")
         grid.attach_next_to(self.lightsButton, self.muteAudioButton,
                             Gtk.PositionType.RIGHT, 1, 1)
+        # Conditional is probably unnecessary... just match the button and state
+        #if RelayShim.get_relay_state(*lightsRelay):
+        #    self.lightsButton.set_active(True)
+        self.lightsButton.set_active(RelayShim.get_relay_state(*lightsRelay))
 
         self.audioSystemButton = Gtk.ToggleButton(label="Audio\nSystem")
         self.audioSystemButton.connect("toggled", self.on_button_toggled, 
@@ -220,11 +237,10 @@ class ControlWindow(Gtk.Window):
         syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
 
         global suppressSounds
-        suppressSounds = True #Turn on the lights on startup, but quietly.
-        self.lightsButton.set_active(True)
+#        suppressSounds = True
+        self.lightsButton.set_active(True) #Turn on the lights
+        self.sync_buttons_and_relays()
         suppressSounds = False
-
-
 
     def on_button_toggled(self, button, buttonName):
         """Button was toggled. Figure out which button and do something."""
@@ -333,135 +349,135 @@ class ControlWindow(Gtk.Window):
 
     def turn_on_lights(self):
         """Turn on the lights."""
-        #RELAY.relayON(*lightsRelay)
+        RELAY.relayON(*lightsRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Lights were turned on")
 
     def turn_off_lights(self):
         """Turn off the lights."""
-        #RELAY.relayOFF(*lightsRelay)
+        RELAY.relayOFF(*lightsRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Lights were turned off")
 
     def turn_on_audio_system(self):
         """Turn on the audio system."""
-        #RELAY.relayON(*audioSystemRelay)
+        RELAY.relayON(*audioSystemRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Audio system was turned on")
 
     def turn_off_audio_system(self):
         """Turn off the audio system."""
-        #RELAY.relayOFF(*audioSystemRelay)
+        RELAY.relayOFF(*audioSystemRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Audio system was turned off")
 
     def turn_on_power_supply(self):
         """Turn on the 12VDC power supply."""
-        #RELAY.relayON(*powerSupplyRelay)
+        RELAY.relayON(*powerSupplyRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"12VDC power supply was turned on")
 
     def turn_off_power_supply(self):
         """Turn off the 12VDC power supply."""
-        #RELAY.relayOFF(*powerSupplyRelay)
+        RELAY.relayOFF(*powerSupplyRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"12VDC power supply was turned off")
 
     def turn_on_dual_monitor(self):
         """Turn on the dual monitor."""
-        #RELAY.relayON(*dualMonitorRelay)
+        RELAY.relayON(*dualMonitorRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Dual monitor was turned on")
 
     def turn_off_dual_monitor(self):
         """Turn off the dual monitor."""
-        #RELAY.relayOFF(*dualMonitorRelay)
+        RELAY.relayOFF(*dualMonitorRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Dual monitor was turned off")
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
-        #RELAY.relayOFF(*leftSpeakerMuteRelay)
-        #RELAY.relayOFF(*rightSpeakerMuteRelay)
+        RELAY.relayOFF(*leftSpeakerMuteRelay)
+        RELAY.relayOFF(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Left and right audio was muted")
     
     def unmute_audio(self):
         """Unmute audio on left and right channels. Relays on."""
-        #RELAY.relayON(*leftSpeakerMuteRelay)
-        #RELAY.relayON(*rightSpeakerMuteRelay)
+        RELAY.relayON(*leftSpeakerMuteRelay)
+        RELAY.relayON(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Left and right audio was unmuted")
 
     def turn_on_ameritron(self):
         """Turn on the Ameritron amplifier."""
-        #RELAY.relayON(*ameritronRelay)
+        RELAY.relayON(*ameritronRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned on")
 
     def turn_off_ameritron(self):
         """Turn off the Ameritron amplifier."""
-        #RELAY.relayOFF(*ameritronReplay)
+        RELAY.relayOFF(*ameritronReplay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned off")
 
     def turn_on_aux_devices(self):
         """Turn on the auxilary devices."""
-        #RELAY.relayON(*auxDevicesRelay)
+        RELAY.relayON(*auxDevicesRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned on")
 
     def turn_off_aux_devices(self):
         """Turn off the auxilary devices."""
-        #RELAY.relayOFF(*auxDevicesRelay)
+        RELAY.relayOFF(*auxDevicesRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned off")
 
     def turn_on_thermal_control(self):
         """Turn on the thermal control."""
-        #RELAY.relayON(*thermalControlRelay)
+        RELAY.relayON(*thermalControlRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned on")
 
     def turn_off_thermal_control(self):
         """Turn off the thermal control."""
-        #RELAY.relayOFF(*thermalControlRelay)
+        RELAY.relayOFF(*thermalControlRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned off")
 
     def turn_on_yaesu_101(self):
         """Turn on the Yaesu 101."""
-        #RELAY.relayON(*yaesu101Relay)
+        RELAY.relayON(*yaesu101Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned on")
 
     def turn_off_yaesu_101(self):
         """Turn off the Yaesu 101."""
-        #RELAY.relayOFF(*yaesu101Relay)
+        RELAY.relayOFF(*yaesu101Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned off")
 
     def turn_on_icom_7300(self):
         """Turn on the Icom 7300."""
-        #RELAY.relayON(*icom7300Relay)
+        RELAY.relayON(*icom7300Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned on")
 
     def turn_off_icom_7300(self):
         """Turn off the Icom 7300."""
-        #RELAY.relayOFF(*icom7300Relay)
+        RELAY.relayOFF(*icom7300Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned off")
 
     def turn_on_yaesu_7900(self):
         """Turn on the Yaesu 7900."""
-        #RELAY.relayON(*yaesu7900Relay)
+        RELAY.relayON(*yaesu7900Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned on")
 
     def turn_off_yaesu_7900(self):
         """Turn off the Yaesu 7900."""
-        #RELAY.relayOFF(*yaesu7900Relay)
+        RELAY.relayOFF(*yaesu7900Relay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned off")
 
@@ -646,28 +662,28 @@ class ControlWindow(Gtk.Window):
 
 
 # Test code for relay board fail.
-#testRelayAddressError = 3
-#if RELAY.getADDR(plate12vdc) != plate12vdc && if RELAY.getADDR(plate120vac) != plate120vac:
-#if testRelayAddressError == 0:
-#    errorDialogMessage = ("Can't start application. Neither relay plate is responding,")
-#    errorWin = TerminationWindow()
-#    errorWin.create_error_window(errorDialogMessage)
-#    syslog.syslog(syslog.LOG_ERR, "Neither relay plate is responding - terminating program")
-#    sys.exit()
-#if RELAY.getADDR(plate120vac) != plate120vac:
-#elif testRelayAddressError == 2:
-#    errorDialogMessage = ("Can't start application. 120VAC relay plate not responding,")
-#    errorWin = TerminationWindow()
-#    errorWin.create_error_window(errorDialogMessage)
-#    syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
-#    sys.exit()
-#if RELAY.getADDR(plate120vac) != plate120vac:
-#elif testRelayAddressError == 3:
-#    errorDialogMessage = ("Can't start application. 12VDC relay plate not responding,")
-#    errorWin = TerminationWindow()
-#    errorWin.create_error_window(errorDialogMessage)
-#    syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
-#    sys.exit()
+testRelayAddressError = 3
+if RELAY.getADDR(plate12vdc) != plate12vdc && if RELAY.getADDR(plate120vac) != plate120vac:
+if testRelayAddressError == 0:
+    errorDialogMessage = ("Can't start application. Neither relay plate is responding,")
+    errorWin = TerminationWindow()
+    errorWin.create_error_window(errorDialogMessage)
+    syslog.syslog(syslog.LOG_ERR, "Neither relay plate is responding - terminating program")
+    sys.exit()
+if RELAY.getADDR(plate120vac) != plate120vac:
+elif testRelayAddressError == 2:
+    errorDialogMessage = ("Can't start application. 120VAC relay plate not responding,")
+    errorWin = TerminationWindow()
+    errorWin.create_error_window(errorDialogMessage)
+    syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
+    sys.exit()
+if RELAY.getADDR(plate120vac) != plate120vac:
+elif testRelayAddressError == 3:
+    errorDialogMessage = ("Can't start application. 12VDC relay plate not responding,")
+    errorWin = TerminationWindow()
+    errorWin.create_error_window(errorDialogMessage)
+    syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
+    sys.exit()
 
 
 win = ControlWindow()
