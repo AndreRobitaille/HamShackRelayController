@@ -268,12 +268,6 @@ class ControlWindow(Gtk.Window):
             else:
                 self.turn_off_dual_monitor()
 
-        if buttonName == "powerSupply":
-            if button.get_active():
-                self.turn_on_power_supply()
-            else:
-                self.turn_off_power_supply()
-
         if buttonName == "auxDevices":
             if button.get_active():
                 self.turn_on_aux_devices()
@@ -478,70 +472,81 @@ class ControlWindow(Gtk.Window):
         while pygame.mixer.get_busy():  #Click sound needs to finish.
             continue
 
-        #turn on relays here
-        #1,5 audio - button down
-        self.audioSystemButton.set_active(True)
-        time.sleep(1)
-
-        #unmute audio
-        #0,1 left speaker mute - mute button up
-        #0,2 right speaker mute - see above
-        self.muteAudioButton.set_active(False)
-        time.sleep(1)
-        
-        #lights on
-        #1,3 lights - button down
-        self.lightsButton.set_active(True)
-        time.sleep(1)
-        
-        #power supply on
-        #1,1 power supply - button down
-        self.powerSupplyButton.set_active(True)
-        time.sleep(1)
-        
-        #dual monitor on
-        #1,2 dual monitor - button down
-        self.dualMonitorButton.set_active(True)
-        time.sleep(1)
-        
-        #101mp on
-        #1,4 101mp - button down
-        self.yaesu101Button.set_active(True)
-        time.sleep(1)
-        
-        #leave off
-        #1,6 nothing ???
-        #1,7 nothing ???
+        if not self.audioSystemButton.get_active():
+            self.audioSystemButton.set_active(True)
+            time.sleep(1)
+        if self.muteAudioButton.get_active():
+            self.muteAudioButton.set_active(False)
+            time.sleep(1)
+        if not self.lightsButton.get_active():
+            self.lightsButton.set_active(True)
+            time.sleep(1)
+        if not self.powerSupplyButton.get_active():
+            self.powerSupplyButton.set_active(True)
+            time.sleep(3)
+        if not self.dualMonitorButton.get_active():
+            self.dualMonitorButton.set_active(True)
+            time.sleep(1)
+        if not self.yaesu101Button.get_active():
+            self.yaesu101Button.set_active(True)
+            time.sleep(1)
         
         #7300 commented out
-        #0,6 7300 - commented out
-        #self.icom7300Button.set_active(True)
-        #time.sleep(1)
+        #if not self.icom7300Button.get_active():
+            #self.icom7300Button.set_active(True)
+            #time.sleep(1)
         
-        # aux on
-        #0,3 aux - button down
-        self.auxDevicesButton.set_active(True)
-        time.sleep(1)
+        if not self.auxDevicesButton.get_active():
+            self.auxDevicesButton.set_active(True)
+            time.sleep(1)
+        if not self.yaesu7900Button.get_active():
+            self.yaesu7900Button.set_active(True)
+            time.sleep(1)
+        if not self.thermalControlButton.get_active():
+            self.thermalControlButton.set_active(True)
         
-        # 7900 on
-        #0,4 7900 - button down
-        self.yaesu7900Button.set_active(True)
-        time.sleep(1)
-        
-        # thermal on
-        #0,5 thermal - button down
-        self.thermalControlButton.set_active(True)
-        
-        #RELAY.relayON(*)
-       
         suppressSounds = False #Play sounds again now that we're done pressing buttons.
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, "Completed auto power up")
 
     def perform_normal_shutdown(self):
         """Normal Shutdown - turn off all power relays with time delay."""
-        #shutoff relays here
+        global suppressSounds
+        suppressSounds = True #Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  #Click sound needs to finish.
+            continue
+
+        self.auxDevicesButton.set_active(False)
+        time.sleep(0.5)
+        self.yaesu7900Button.set_active(False)
+        time.sleep(0.5)
+        self.thermalControlButton.set_active(False)
+        time.sleep(0.5)
+        self.icom7300Button.set_active(False)
+        time.sleep(0.5)
+        self.ameritronButton.set_active(False)
+        time.sleep(0.5)
+        self.dualMonitorButton.set_active(False)
+        time.sleep(0.5)
+        
+        #Leave lights on
+        #self.lightsButton.set_active(False)
+        #time.sleep(0.5)
+
+        self.yaesu101Button.set_active(False)
+        time.sleep(0.5)
+        self.powerSupplyButton.set_active(False)
+        time.sleep(0.5)
+        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+        self.play_sound(completedSound)
+        while pygame.mixer.get_busy():  #Complete sound needs to finish.
+            continue
+        self.muteAudioButton.set_active(True)
+        time.sleep(0.5)
+        self.audioSystemButton.set_active(False)
+        
         syslog.syslog(syslog.LOG_INFO, "Completed normal shutdown")
+
 
     def play_sound(self, sound):
         """Plays a sound using pygame but don't wait before moving on."""
