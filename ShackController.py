@@ -547,6 +547,77 @@ class ControlWindow(Gtk.Window):
         
         syslog.syslog(syslog.LOG_INFO, "Completed normal shutdown")
 
+    def perform_full_shutdown(self):
+        """Full Shutdown - turn off all power relays with time delay."""
+        global suppressSounds
+        suppressSounds = True #Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  #Click sound needs to finish.
+            continue
+
+        self.auxDevicesButton.set_active(False)
+        time.sleep(0.5)
+        self.yaesu7900Button.set_active(False)
+        time.sleep(0.5)
+        self.thermalControlButton.set_active(False)
+        time.sleep(0.5)
+        self.icom7300Button.set_active(False)
+        time.sleep(0.5)
+        self.ameritronButton.set_active(False)
+        time.sleep(0.5)
+        self.dualMonitorButton.set_active(False)
+        time.sleep(0.5)
+        self.lightsButton.set_active(False)
+        time.sleep(0.5)
+        self.yaesu101Button.set_active(False)
+        time.sleep(0.5)
+        self.powerSupplyButton.set_active(False)
+        time.sleep(0.5)
+        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+        self.play_sound(completedSound)
+        while pygame.mixer.get_busy():  #Complete sound needs to finish.
+            continue
+        self.muteAudioButton.set_active(True)
+        time.sleep(0.5)
+        self.audioSystemButton.set_active(False)
+        
+        syslog.syslog(syslog.LOG_INFO, "Completed full shutdown")
+
+    def perform_full_system_shutdown(self):
+        """Full System Shutdown - turn off all power relays with time delay and computer.."""
+        global suppressSounds
+        suppressSounds = True #Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  #Click sound needs to finish.
+            continue
+
+        self.auxDevicesButton.set_active(False)
+        time.sleep(0.5)
+        self.yaesu7900Button.set_active(False)
+        time.sleep(0.5)
+        self.thermalControlButton.set_active(False)
+        time.sleep(0.5)
+        self.icom7300Button.set_active(False)
+        time.sleep(0.5)
+        self.ameritronButton.set_active(False)
+        time.sleep(0.5)
+        self.dualMonitorButton.set_active(False)
+        time.sleep(0.5)
+        self.lightsButton.set_active(False)
+        time.sleep(0.5)
+        self.yaesu101Button.set_active(False)
+        time.sleep(0.5)
+        self.powerSupplyButton.set_active(False)
+        time.sleep(0.5)
+        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+        self.play_sound(completedSound)
+        while pygame.mixer.get_busy():  #Complete sound needs to finish.
+            continue
+        self.muteAudioButton.set_active(True)
+        time.sleep(0.5)
+        self.audioSystemButton.set_active(False)
+        
+        syslog.syslog(syslog.LOG_INFO, "Completed full system shutdown")
+
+        SYSTEM.system("sudo halt")
 
     def play_sound(self, sound):
         """Plays a sound using pygame but don't wait before moving on."""
