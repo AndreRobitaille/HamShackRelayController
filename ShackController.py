@@ -277,6 +277,23 @@ class ControlWindow(Gtk.Window):
         global suppressSounds
         suppressSounds = False # Turn audio back on now that the UI is built
 
+        self.connect("realize", self.on_realize)
+        GLib.timeout_add(interval=5000, function=self.reset_cursor)
+
+    def on_realize(self, widget):
+        # Step 1: Get the Gdk.Display for the toplevel for this widget.
+        display = widget.get_display()
+
+        # Step 2: Create a new Cursor of type BLANK_CURSOR
+        cursor = Gdk.Cursor.new_for_display(display, Gdk.CursorType.BLANK_CURSOR)
+
+        # Step 3: Get the widget’s Gdk.Window and set the new Cursor
+        widget.get_window().set_cursor(cursor)
+
+    def reset_cursor(self):
+        cursor = Gdk.Cursor.new_from_name(self.get_display(), 'default')
+        self.get_window().set_cursor(cursor)
+
     def on_button_toggled(self, button, buttonName):
         """Button was toggled. Figure out which button and do something."""
         if suppressSounds != True:
