@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import gi
@@ -16,7 +17,6 @@ import syslog
 #   sudo service rsyslog restart
 syslog.setlogmask(syslog.LOG_UPTO(syslog.LOG_INFO))
 
-
 # Initalize the pygame mixer for sounds. Doing it in this
 # order supposedly shortens the delay before the sound plays.
 pygame.mixer.pre_init(44100, -16, 2, 512)
@@ -28,7 +28,6 @@ syslog.syslog(syslog.LOG_INFO, "Pygame initialized and sounds loaded")
 
 global suppressSounds
 suppressSounds = True  # Avoids playing UI sounds when true. Start quietly.
-
 
 # Create arrays for each relay (plate address, relay address)
 leftSpeakerMuteRelay = 0, 1
@@ -46,12 +45,10 @@ audioSystemRelay = 1, 5
 # 1,6 unused
 # 1,7 unused
 
-
 # Plate addresses
 plate12vdc = 0
 plate120vac = 1
 allPlates = 2   # Not really 2. This must be manually translated in the method.
-
 
 
 class RelayShim: 
@@ -69,7 +66,6 @@ class RelayShim:
             relayPositionBoolean = True
            
         return relayPositionBoolean
-
 
     def immediate_shutoff(self, plate):
         """Something is wrong or we want to initalize plates."""
@@ -90,10 +86,13 @@ class RelayShim:
 
 
 class TerminationWindow(Gtk.Window):
+    """Popup window if we have to force the application to quit."""
     def __init__(self):
+        """Initalize the termination window."""
         super().__init__(title="Application Error")
 
     def create_error_window(self, errorMessage):
+        """Create an error window and display the message passed as an argument."""
         dialog = Gtk.MessageDialog(
             transient_for=self,
             flags=0,
@@ -117,6 +116,7 @@ class ControlWindow(Gtk.Window):
         self.set_border_width(10)
 
         # Grid creation and button placement
+        # Check state of relays and make toggle buttons match.
         grid = Gtk.Grid()
         
         normalShutdownButton = Gtk.Button(label="Normal\nShutdown")
@@ -207,8 +207,8 @@ class ControlWindow(Gtk.Window):
                             Gtk.PositionType.RIGHT, 1, 1)
         relayState = RelayShim.get_relay_state(*icom7300Relay)
         self.icom7300Button.set_active(relayState)
-        self.icom7300Button.set_sensitive(False) #Disable icom 7300 button.
-        self.turn_off_icom_7300()                #Turn off icom 7300 relay.
+        self.icom7300Button.set_sensitive(False) # Disable icom 7300 button.
+        self.turn_off_icom_7300()                # Turn off icom 7300 relay.
 
         self.yaesu7900Button = Gtk.ToggleButton(label="VHF\nYaesu\n7900")
         self.yaesu7900Button.connect("toggled", self.on_button_toggled, 
@@ -226,7 +226,7 @@ class ControlWindow(Gtk.Window):
         relayState = RelayShim.get_relay_state(*ameritronRelay)
         self.ameritronButton.set_active(relayState)
 
-        #Extra buttons to fit the original layout.
+        # Extra buttons to fit the original layout.
         extraRelay1Button = Gtk.Button()
         grid.attach_next_to(extraRelay1Button, self.ameritronButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
@@ -259,8 +259,8 @@ class ControlWindow(Gtk.Window):
         syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
 
         global suppressSounds
-        self.lightsButton.set_active(True) #Turn on the lights
-        suppressSounds = False
+        self.lightsButton.set_active(True) # Turn on the lights
+        suppressSounds = False # Turn audio back on now that everything is built.
 
     def on_button_toggled(self, button, buttonName):
         """Button was toggled. Figure out which button and do something."""
@@ -334,14 +334,20 @@ class ControlWindow(Gtk.Window):
             else:
                 self.turn_off_ameritron()
 
+        # Only used for debug logging.
+        if button.get_active():
+            state = "on"
+        else:
+            state = "off"
         syslog.syslog(syslog.LOG_DEBUG, f"Button {buttonName} was turned {state}")
-
 
     def on_button_clicked(self, button, buttonName):
         """Standard button was pressed. Probably starts toggling other buttons."""
         if suppressSounds != True:
-            time.sleep(0.6) #Wait for the click sound to be ready to play.
+            time.sleep(0.6) # Wait for the click sound to be ready to play.
             self.play_sound(clickSound)
+        
+        # Use threads or the UI won't update until after everything is done.
         if buttonName == "normalShutdown":
             buttonThread = threading.Thread(target=self.perform_normal_shutdown, args=())
             buttonThread.start()
@@ -361,141 +367,141 @@ class ControlWindow(Gtk.Window):
         """Turn on the lights."""
         RELAY.relayON(*lightsRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Lights were turned on")
+        syslog.syslog(syslog.LOG_INFO, "Lights were turned on")
 
     def turn_off_lights(self):
         """Turn off the lights."""
         RELAY.relayOFF(*lightsRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Lights were turned off")
+        syslog.syslog(syslog.LOG_INFO, "Lights were turned off")
 
     def turn_on_audio_system(self):
         """Turn on the audio system."""
         RELAY.relayON(*audioSystemRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Audio system was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Audio system was turned on")
 
     def turn_off_audio_system(self):
         """Turn off the audio system."""
         RELAY.relayOFF(*audioSystemRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Audio system was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Audio system was turned off")
 
     def turn_on_power_supply(self):
         """Turn on the 12VDC power supply."""
         RELAY.relayON(*powerSupplyRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"12VDC power supply was turned on")
+        syslog.syslog(syslog.LOG_INFO, "12VDC power supply was turned on")
 
     def turn_off_power_supply(self):
         """Turn off the 12VDC power supply."""
         RELAY.relayOFF(*powerSupplyRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"12VDC power supply was turned off")
+        syslog.syslog(syslog.LOG_INFO, "12VDC power supply was turned off")
 
     def turn_on_dual_monitor(self):
         """Turn on the dual monitor."""
         RELAY.relayON(*dualMonitorRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Dual monitor was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Dual monitor was turned on")
 
     def turn_off_dual_monitor(self):
         """Turn off the dual monitor."""
         RELAY.relayOFF(*dualMonitorRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Dual monitor was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Dual monitor was turned off")
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
         RELAY.relayOFF(*leftSpeakerMuteRelay)
         RELAY.relayOFF(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Left and right audio was muted")
+        syslog.syslog(syslog.LOG_INFO, "Left and right audio was muted")
     
     def unmute_audio(self):
         """Unmute audio on left and right channels. Relays on."""
         RELAY.relayON(*leftSpeakerMuteRelay)
         RELAY.relayON(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Left and right audio was unmuted")
+        syslog.syslog(syslog.LOG_INFO, "Left and right audio was unmuted")
 
     def turn_on_ameritron(self):
         """Turn on the Ameritron amplifier."""
         RELAY.relayON(*ameritronRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Ameritron amplifier was turned on")
 
     def turn_off_ameritron(self):
         """Turn off the Ameritron amplifier."""
         RELAY.relayOFF(*ameritronRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Ameritron amplifier was turned off")
 
     def turn_on_aux_devices(self):
         """Turn on the auxilary devices."""
         RELAY.relayON(*auxDevicesRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned on")
+        syslog.syslog(syslog.LOG_INFO, "Auxilary devices were turned on")
 
     def turn_off_aux_devices(self):
         """Turn off the auxilary devices."""
         RELAY.relayOFF(*auxDevicesRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Auxilary devices were turned off")
+        syslog.syslog(syslog.LOG_INFO, "Auxilary devices were turned off")
 
     def turn_on_thermal_control(self):
         """Turn on the thermal control."""
         RELAY.relayON(*thermalControlRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Thermal control was turned on")
 
     def turn_off_thermal_control(self):
         """Turn off the thermal control."""
         RELAY.relayOFF(*thermalControlRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Thermal control was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Thermal control was turned off")
 
     def turn_on_yaesu_101(self):
         """Turn on the Yaesu 101."""
         RELAY.relayON(*yaesu101Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 101 was turned on")
 
     def turn_off_yaesu_101(self):
         """Turn off the Yaesu 101."""
         RELAY.relayOFF(*yaesu101Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Yaesu 101 was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 101 was turned off")
 
     def turn_on_icom_7300(self):
         """Turn on the Icom 7300."""
         RELAY.relayON(*icom7300Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Icom 7300 was turned on")
 
     def turn_off_icom_7300(self):
         """Turn off the Icom 7300."""
         RELAY.relayOFF(*icom7300Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Icom 7300 was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Icom 7300 was turned off")
 
     def turn_on_yaesu_7900(self):
         """Turn on the Yaesu 7900."""
         RELAY.relayON(*yaesu7900Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 7900 was turned on")
 
     def turn_off_yaesu_7900(self):
         """Turn off the Yaesu 7900."""
         RELAY.relayOFF(*yaesu7900Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_INFO, f"Yaesu 7900 was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 7900 was turned off")
 
     def perform_power_up(self):
         """Power up all the normal systems."""
         global suppressSounds
-        suppressSounds = True #Supress sounds; we're about to press buttons.
-        while pygame.mixer.get_busy():  #Click sound needs to finish.
+        suppressSounds = True # Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  # Click sound needs to finish.
             continue
 
         if not self.audioSystemButton.get_active():
@@ -517,7 +523,7 @@ class ControlWindow(Gtk.Window):
             self.yaesu101Button.set_active(True)
             time.sleep(1)
         
-        #7300 commented out
+        # 7300 commented out
         #if not self.icom7300Button.get_active():
             #self.icom7300Button.set_active(True)
             #time.sleep(1)
@@ -531,15 +537,15 @@ class ControlWindow(Gtk.Window):
         if not self.thermalControlButton.get_active():
             self.thermalControlButton.set_active(True)
         
-        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+        suppressSounds = False # Play sounds again now that we're done pressing buttons.
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, "Completed auto power up")
 
     def perform_normal_shutdown(self):
         """Normal Shutdown - turn off all power relays with time delay."""
         global suppressSounds
-        suppressSounds = True #Supress sounds; we're about to press buttons.
-        while pygame.mixer.get_busy():  #Click sound needs to finish.
+        suppressSounds = True # Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  # Click sound needs to finish.
             continue
 
         self.auxDevicesButton.set_active(False)
@@ -555,7 +561,7 @@ class ControlWindow(Gtk.Window):
         self.dualMonitorButton.set_active(False)
         time.sleep(0.5)
         
-        #Leave lights on
+        # Leave lights on
         #self.lightsButton.set_active(False)
         #time.sleep(0.5)
 
@@ -563,10 +569,12 @@ class ControlWindow(Gtk.Window):
         time.sleep(0.5)
         self.powerSupplyButton.set_active(False)
         time.sleep(0.5)
-        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+
+        suppressSounds = False # Play sounds again now that we're done pressing buttons.
         self.play_sound(completedSound)
-        while pygame.mixer.get_busy():  #Complete sound needs to finish.
+        while pygame.mixer.get_busy():  # Complete sound needs to finish.
             continue
+
         self.muteAudioButton.set_active(True)
         time.sleep(0.5)
         self.audioSystemButton.set_active(False)
@@ -576,8 +584,8 @@ class ControlWindow(Gtk.Window):
     def perform_full_shutdown(self):
         """Full Shutdown - turn off all power relays with time delay."""
         global suppressSounds
-        suppressSounds = True #Supress sounds; we're about to press buttons.
-        while pygame.mixer.get_busy():  #Click sound needs to finish.
+        suppressSounds = True # Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  # Click sound needs to finish.
             continue
 
         self.auxDevicesButton.set_active(False)
@@ -598,10 +606,12 @@ class ControlWindow(Gtk.Window):
         time.sleep(0.5)
         self.powerSupplyButton.set_active(False)
         time.sleep(0.5)
-        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+
+        suppressSounds = False # Play sounds again now that we're done pressing buttons.
         self.play_sound(completedSound)
-        while pygame.mixer.get_busy():  #Complete sound needs to finish.
+        while pygame.mixer.get_busy():  # Complete sound needs to finish.
             continue
+        
         self.muteAudioButton.set_active(True)
         time.sleep(0.5)
         self.audioSystemButton.set_active(False)
@@ -611,8 +621,8 @@ class ControlWindow(Gtk.Window):
     def perform_full_system_shutdown(self):
         """Full System Shutdown - turn off all power relays with time delay and computer.."""
         global suppressSounds
-        suppressSounds = True #Supress sounds; we're about to press buttons.
-        while pygame.mixer.get_busy():  #Click sound needs to finish.
+        suppressSounds = True # Supress sounds; we're about to press buttons.
+        while pygame.mixer.get_busy():  # Click sound needs to finish.
             continue
 
         self.auxDevicesButton.set_active(False)
@@ -633,17 +643,19 @@ class ControlWindow(Gtk.Window):
         time.sleep(0.5)
         self.powerSupplyButton.set_active(False)
         time.sleep(0.5)
-        suppressSounds = False #Play sounds again now that we're done pressing buttons.
+
+        suppressSounds = False # Play sounds again now that we're done pressing buttons.
         self.play_sound(completedSound)
-        while pygame.mixer.get_busy():  #Complete sound needs to finish.
+        while pygame.mixer.get_busy():  # Complete sound needs to finish.
             continue
+        
         self.muteAudioButton.set_active(True)
         time.sleep(0.5)
         self.audioSystemButton.set_active(False)
         
         syslog.syslog(syslog.LOG_INFO, "Completed full system shutdown")
 
-        SYSTEM.system("sudo halt")
+        os.system("sudo halt")
 
     def exit_to_os(self):
         sys.exit()
@@ -673,19 +685,19 @@ class ControlWindow(Gtk.Window):
 
 # Test for relay board fail.
 if RELAY.getADDR(plate12vdc) != plate12vdc and RELAY.getADDR(plate120vac) != plate120vac:
-    errorDialogMessage = ("Can't start application. Neither relay plate is responding,")
+    errorDialogMessage = ("Can't start application. Neither relay plate is responding.")
     errorWin = TerminationWindow()
     errorWin.create_error_window(errorDialogMessage)
     syslog.syslog(syslog.LOG_ERR, "Neither relay plate is responding - terminating program")
     sys.exit()
 elif RELAY.getADDR(plate120vac) != plate120vac:
-    errorDialogMessage = ("Can't start application. 120VAC relay plate not responding,")
+    errorDialogMessage = ("Can't start application. 120VAC relay plate not responding.")
     errorWin = TerminationWindow()
     errorWin.create_error_window(errorDialogMessage)
     syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
     sys.exit()
 elif RELAY.getADDR(plate120vac) != plate120vac:
-    errorDialogMessage = ("Can't start application. 12VDC relay plate not responding,")
+    errorDialogMessage = ("Can't start application. 12VDC relay plate not responding.")
     errorWin = TerminationWindow()
     errorWin.create_error_window(errorDialogMessage)
     syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
@@ -696,4 +708,3 @@ win = ControlWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
 Gtk.main()
-
