@@ -141,9 +141,17 @@ class ControlWindow(Gtk.Window):
                                      "muteAudio")
         grid.attach_next_to(self.muteAudioButton, fullShutdownButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
-        # weird one to check state becuase there areo two of them
-        # and the state is the opposite of what you'd expect
-        #buttonRelayState = RelayShim.get_relay_state(*lightsRelaYy)
+        # Setting state is weird here becuase there are two of them
+        # and the state is the opposite of what you'd expect.
+        # Extra method added in case the relays don't match.
+        relayState = RelayShim.get_relay_state(*leftSpeakerMuteRelay)
+        relayState2 = RelayShim.get_relay_state(*rightSpeakerMuteRelay)
+        if relayState == False or relayState2 == False:
+            self.muteAudioButton.set_active(True)
+            self.mute_audio()
+        else:
+            self.muteAudioButton.set_active(False)
+            self.unmute_audio()
 
         self.lightsButton = Gtk.ToggleButton(label="Lights")
         self.lightsButton.connect("toggled", self.on_button_toggled, "lights")
