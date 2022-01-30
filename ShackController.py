@@ -57,13 +57,18 @@ allPlates = 2   # Not really 2. This must be manually translated in the method.
 class RelayShim: 
     """Class to extend Pi-Plates relay functionality"""
 
-    def get_relay_state(self, relayAddress, relayPosition):
+    def get_relay_state(relayAddress, relayPosition):
         """Retreive and return the state of a specific relay"""
 
-        entirePlateState = f'{RELAY.relaySTATE(relayAddress):08b}'
-        relayPositionState = entirePlateState[relayPosition - 1]
-
-        return relayPositionState
+        # Convert the 7 bit number to binary and reverse the string
+        entirePlateState = f'{RELAY.relaySTATE(relayAddress):07b}'[::-1]
+        relayPositionString = entirePlateState[relayPosition - 1]
+        if relayPositionString == "0":
+            relayPositionBoolean = False
+        elif relayPositionString == "1":
+            relayPositionBoolean = True
+           
+        return relayPositionBoolean
 
 
     def immediate_shutoff(self, plate):
@@ -144,65 +149,82 @@ class ControlWindow(Gtk.Window):
         self.lightsButton.connect("toggled", self.on_button_toggled, "lights")
         grid.attach_next_to(self.lightsButton, self.muteAudioButton,
                             Gtk.PositionType.RIGHT, 1, 1)
-        # Conditional is probably unnecessary... just match the button and state
-        #if RelayShim.get_relay_state(*lightsRelay):
-        #    self.lightsButton.set_active(True)
-        self.lightsButton.set_active(RelayShim.get_relay_state(*lightsRelay))
+        relayState = RelayShim.get_relay_state(*lightsRelay)
+        self.lightsButton.set_active(relayState)
 
         self.audioSystemButton = Gtk.ToggleButton(label="Audio\nSystem")
         self.audioSystemButton.connect("toggled", self.on_button_toggled, 
                                        "audioSystem")
         grid.attach_next_to(self.audioSystemButton, self.lightsButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        relayState = RelayShim.get_relay_state(*audioSystemRelay)
+        self.audioSystemButton.set_active(relayState)
 
         self.powerSupplyButton = Gtk.ToggleButton(label="12VDC\nPower")
         self.powerSupplyButton.connect("toggled", self.on_button_toggled, 
                                        "powerSupply")
         grid.attach_next_to(self.powerSupplyButton, normalShutdownButton, 
                             Gtk.PositionType.BOTTOM, 1, 1)
+        relayState = RelayShim.get_relay_state(*powerSupplyRelay)
+        self.powerSupplyButton.set_active(relayState)
 
         self.dualMonitorButton = Gtk.ToggleButton(label="Dual\nMonitor")
         self.dualMonitorButton.connect("toggled", self.on_button_toggled, 
                                        "dualMonitor")
         grid.attach_next_to(self.dualMonitorButton, self.powerSupplyButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        relayState = RelayShim.get_relay_state(*dualMonitorRelay)
+        self.dualMonitorButton.set_active(relayState)
 
         self.auxDevicesButton = Gtk.ToggleButton(label="Aux\nDevices")
         self.auxDevicesButton.connect("toggled", self.on_button_toggled, 
                                       "auxDevices")
         grid.attach_next_to(self.auxDevicesButton, self.dualMonitorButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        relayState = RelayShim.get_relay_state(*auxDevicesRelay)
+        self.auxDevicesButton.set_active(relayState)
 
         self.thermalControlButton = Gtk.ToggleButton(label="Thermal\nControl")
         self.thermalControlButton.connect("toggled", self.on_button_toggled, 
                                           "thermalControl")
         grid.attach_next_to(self.thermalControlButton, self.auxDevicesButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        relayState = RelayShim.get_relay_state(*thermalControlRelay)
+        self.thermalControlButton.set_active(relayState)
 
         self.yaesu101Button = Gtk.ToggleButton(label="HF-1\nYaesu\n101MP")
         self.yaesu101Button.connect("toggled", self.on_button_toggled, 
                                     "yaesu101")
         grid.attach_next_to(self.yaesu101Button, self.thermalControlButton, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        relayState = RelayShim.get_relay_state(*yaesu101Relay)
+        self.yaesu101Button.set_active(relayState)
 
         self.icom7300Button = Gtk.ToggleButton(label="HF-2\nIcom\n7300")
         self.icom7300Button.connect("toggled", self.on_button_toggled, 
                                     "icom7300")
         grid.attach_next_to(self.icom7300Button, self.yaesu101Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
-        self.icom7300Button.set_sensitive(False) # Disable Icom 7300 button
+        relayState = RelayShim.get_relay_state(*icom7300Relay)
+        self.icom7300Button.set_active(relayState)
+        self.icom7300Button.set_sensitive(False) #Disable icom 7300 button.
+        self.turn_off_icom_7300()                #Turn off icom 7300 relay.
 
         self.yaesu7900Button = Gtk.ToggleButton(label="VHF\nYaesu\n7900")
         self.yaesu7900Button.connect("toggled", self.on_button_toggled, 
                                      "yaesu7900")
         grid.attach_next_to(self.yaesu7900Button, self.icom7300Button, 
                             Gtk.PositionType.RIGHT, 1, 1)
+        relayState = RelayShim.get_relay_state(*yaesu7900Relay)
+        self.yaesu7900Button.set_active(relayState)
 
         self.ameritronButton = Gtk.ToggleButton(label="Amplifier\nAmeritron\nALS-1300")
         self.ameritronButton.connect("toggled", self.on_button_toggled, 
                                      "ameritron")
         grid.attach_next_to(self.ameritronButton, self.powerSupplyButton, 
                             Gtk.PositionType.BOTTOM, 1, 1)
+        relayState = RelayShim.get_relay_state(*ameritronRelay)
+        self.ameritronButton.set_active(relayState)
 
         #Extra buttons to fit the original layout.
         extraRelay1Button = Gtk.Button()
@@ -237,9 +259,7 @@ class ControlWindow(Gtk.Window):
         syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
 
         global suppressSounds
-#        suppressSounds = True
         self.lightsButton.set_active(True) #Turn on the lights
-        self.sync_buttons_and_relays()
         suppressSounds = False
 
     def on_button_toggled(self, button, buttonName):
@@ -247,12 +267,6 @@ class ControlWindow(Gtk.Window):
         if suppressSounds != True:
             time.sleep(0.6) # Wait for the click sound to be ready to play.
             self.play_sound(clickSound)
-        if button.get_active():
-#            RELAY.relayON(relayName)
-            state = "on"
-        else:
-#            RELAY.relayOFF(relayName)
-            state = "off"
         
         if buttonName == "lights":
             if button.get_active():
@@ -320,12 +334,8 @@ class ControlWindow(Gtk.Window):
             else:
                 self.turn_off_ameritron()
 
-        #self.play_sound(completedSound) #This should play after doing something, 
-                                         #not after button press.
         syslog.syslog(syslog.LOG_DEBUG, f"Button {buttonName} was turned {state}")
 
-        # get rid of this soon
-        print("Button", buttonName, "was turned", state)
 
     def on_button_clicked(self, button, buttonName):
         """Standard button was pressed. Probably starts toggling other buttons."""
@@ -417,7 +427,7 @@ class ControlWindow(Gtk.Window):
 
     def turn_off_ameritron(self):
         """Turn off the Ameritron amplifier."""
-        RELAY.relayOFF(*ameritronReplay)
+        RELAY.relayOFF(*ameritronRelay)
         self.play_sound(completedSound)
         syslog.syslog(syslog.LOG_INFO, f"Ameritron amplifier was turned off")
 
@@ -661,24 +671,20 @@ class ControlWindow(Gtk.Window):
             syslog.syslog(syslog.LOG_ERR, f"CSS application failed {e}")
 
 
-# Test code for relay board fail.
-testRelayAddressError = 3
-if RELAY.getADDR(plate12vdc) != plate12vdc && if RELAY.getADDR(plate120vac) != plate120vac:
-if testRelayAddressError == 0:
+# Test for relay board fail.
+if RELAY.getADDR(plate12vdc) != plate12vdc and RELAY.getADDR(plate120vac) != plate120vac:
     errorDialogMessage = ("Can't start application. Neither relay plate is responding,")
     errorWin = TerminationWindow()
     errorWin.create_error_window(errorDialogMessage)
     syslog.syslog(syslog.LOG_ERR, "Neither relay plate is responding - terminating program")
     sys.exit()
-if RELAY.getADDR(plate120vac) != plate120vac:
-elif testRelayAddressError == 2:
+elif RELAY.getADDR(plate120vac) != plate120vac:
     errorDialogMessage = ("Can't start application. 120VAC relay plate not responding,")
     errorWin = TerminationWindow()
     errorWin.create_error_window(errorDialogMessage)
     syslog.syslog(syslog.LOG_ERR, "12vcd relay plate not responding - terminating program")
     sys.exit()
-if RELAY.getADDR(plate120vac) != plate120vac:
-elif testRelayAddressError == 3:
+elif RELAY.getADDR(plate120vac) != plate120vac:
     errorDialogMessage = ("Can't start application. 12VDC relay plate not responding,")
     errorWin = TerminationWindow()
     errorWin.create_error_window(errorDialogMessage)
