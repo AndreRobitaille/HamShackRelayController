@@ -1,16 +1,20 @@
 window {
-  background-color: #F4F1DE
+  background-color: #575757
+}
+
+grid {
+  background-color: #575757
 }
 
 button {
   background-color: #F2CC8F;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #464646;
   padding: 10px 30px;
 }
 
 button:hover:active {
-  background-color: #E07A5F;
+  background-color: #EAB69F;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
      -mox-box-shadow: inset 0px 0px 3px #303030;
           box-shadow: inset 0px 0px 3px #303030;
@@ -18,7 +22,7 @@ button:hover:active {
 }
 
 button:checked {
-  background-color: #81B29A;
+  background-color: #8AB29A;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
      -mox-box-shadow: inset 0px 0px 3px #303030;
           box-shadow: inset 0px 0px 3px #303030;
@@ -27,9 +31,9 @@ button:checked {
 
 button:disabled {
   background-color: #3D405B;
-  outline: none;
+  border-color: #363636;
 }
 
 button:disabled label {
-  color: #3D405B;
+  color: #9FB4BE;
 }

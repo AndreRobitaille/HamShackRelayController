@@ -269,6 +269,7 @@ class ControlWindow(Gtk.Window):
                             Gtk.PositionType.RIGHT, 1, 1)
 
         self.add(grid)
+        self.fullscreen()
         syslog.syslog(syslog.LOG_DEBUG, "Grid and buttons created")
 
         self.lightsButton.set_active(True) # Turn on the lights
