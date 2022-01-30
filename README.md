@@ -21,7 +21,7 @@ Requires the following:
 
 Commands:<br />
 apt install gtk3 python3-gi python-pip<br />
-<change to script directory><br />
+(change to script directory)<br />
 pip3 install pygame<br />
 pip3 install pi-plates
 
