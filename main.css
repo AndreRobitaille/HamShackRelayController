@@ -1,12 +1,16 @@
+window {
+  background-color: #F4F1DE
+}
+
 button {
-  background-color: LightBlue;
+  background-color: #F2CC8F;
   border-radius: 5px;
   border: 1px solid #ccc;
   padding: 10px 30px;
 }
 
 button:hover:active {
-  background-color: Maroon;
+  background-color: #E07A5F;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
      -mox-box-shadow: inset 0px 0px 3px #303030;
           box-shadow: inset 0px 0px 3px #303030;
@@ -14,7 +18,7 @@ button:hover:active {
 }
 
 button:checked {
-  background-color: LightCoral;
+  background-color: #81B29A;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
      -mox-box-shadow: inset 0px 0px 3px #303030;
           box-shadow: inset 0px 0px 3px #303030;
@@ -22,6 +26,10 @@ button:checked {
 }
 
 button:disabled {
-  background-color: DarkGrey;
+  background-color: #3D405B;
   outline: none;
+}
+
+button:disabled label {
+  color: #3D405B;
 }
