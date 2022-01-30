@@ -1,9 +1,9 @@
 window {
-  background-color: #575757;
+  background-color: #144F66;
 }
 
 grid {
-  background-color: #575757;
+  background-color: #144F66;
 }
 
 button {
@@ -23,7 +23,7 @@ button:hover:active {
 }
 
 button:checked {
-  background-color: #8AB29A;
+  background-color: #22A94E;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
      -mox-box-shadow: inset 0px 0px 3px #303030;
           box-shadow: inset 0px 0px 3px #303030;
