@@ -68,25 +68,25 @@ class RelayShim:
         elif relayPositionString == "1":
             relayPositionBoolean = True
 
-        syslog.syslog(syslog.LOG_DEBUG, f"Relay state polled. {entirePlateState}")
+        syslog.syslog(syslog.LOG_INFO, f"Relay state polled. {entirePlateState}")
         return relayPositionBoolean
 
     def immediate_shutoff(self, plate):
         """Something is wrong or we want to initalize plates."""
         if plate < 2:                   # Not both plates
             RELAY.RESET(plate)
-            syslog.syslog(syslog.LOG_DEBUG, f"Plate {plate} relays shut off")
+            syslog.syslog(syslog.LOG_INFO, f"Plate {plate} relays shut off")
 
         elif plate == 2:                # Both plates
             RELAY.RESET(plate12vdc)
             RELAY.RESET(plate120vac)
-            syslog.syslog(syslog.LOG_DEBUG, f"Relays on both plates shut off")
+            syslog.syslog(syslog.LOG_INFO, f"Relays on both plates shut off")
 
         else:                           # Not used, but could be an emergency
                                         # kill everything and quit button
             RELAY.RESET(plate12vdc)
             RELAY.RESET(plate120vac)
-            syslog.syslog(syslog.LOG_DEBUG, f"Relays on both plates shut off and quit application")
+            syslog.syslog(syslog.LOG_INFO, f"Relays on both plates shut off and quit application")
             sys.exit()
 
 
@@ -270,7 +270,7 @@ class ControlWindow(Gtk.Window):
 
         self.add(grid)
         self.fullscreen()
-        syslog.syslog(syslog.LOG_DEBUG, "Grid and buttons created")
+        syslog.syslog(syslog.LOG_INFO, "Grid and buttons created")
 
         self.lightsButton.set_active(True) # Turn on the lights
         
@@ -349,12 +349,12 @@ class ControlWindow(Gtk.Window):
             else:
                 self.turn_off_ameritron()
 
-        # Only used for debug logging
+        # Only used for logging code below
         if button.get_active():
             state = "on"
         else:
             state = "off"
-        syslog.syslog(syslog.LOG_DEBUG, f"Button {buttonName} was turned {state}")
+        syslog.syslog(syslog.LOG_INFO, f"Button {buttonName} was turned {state}")
 
     def on_button_clicked(self, button, buttonName):
         """Standard button was pressed. Probably starts toggling other buttons."""
@@ -382,135 +382,135 @@ class ControlWindow(Gtk.Window):
         """Turn on the lights."""
         RELAY.relayON(*lightsRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Lights were turned on")
+        syslog.syslog(syslog.LOG_INFO, "Lights were turned on")
 
     def turn_off_lights(self):
         """Turn off the lights."""
         RELAY.relayOFF(*lightsRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Lights were turned off")
+        syslog.syslog(syslog.LOG_INFO, "Lights were turned off")
 
     def turn_on_audio_system(self):
         """Turn on the audio system."""
         RELAY.relayON(*audioSystemRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Audio system was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Audio system was turned on")
 
     def turn_off_audio_system(self):
         """Turn off the audio system."""
         RELAY.relayOFF(*audioSystemRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Audio system was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Audio system was turned off")
 
     def turn_on_power_supply(self):
         """Turn on the 12VDC power supply."""
         RELAY.relayON(*powerSupplyRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "12VDC power supply was turned on")
+        syslog.syslog(syslog.LOG_INFO, "12VDC power supply was turned on")
 
     def turn_off_power_supply(self):
         """Turn off the 12VDC power supply."""
         RELAY.relayOFF(*powerSupplyRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "12VDC power supply was turned off")
+        syslog.syslog(syslog.LOG_INFO, "12VDC power supply was turned off")
 
     def turn_on_dual_monitor(self):
         """Turn on the dual monitor."""
         RELAY.relayON(*dualMonitorRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Dual monitor was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Dual monitor was turned on")
 
     def turn_off_dual_monitor(self):
         """Turn off the dual monitor."""
         RELAY.relayOFF(*dualMonitorRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Dual monitor was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Dual monitor was turned off")
 
     def mute_audio(self):
         """Mute audio on left and right channels. Relays off."""
         RELAY.relayOFF(*leftSpeakerMuteRelay)
         RELAY.relayOFF(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Left and right audio was muted")
+        syslog.syslog(syslog.LOG_INFO, "Left and right audio was muted")
     
     def unmute_audio(self):
         """Unmute audio on left and right channels. Relays on."""
         RELAY.relayON(*leftSpeakerMuteRelay)
         RELAY.relayON(*rightSpeakerMuteRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Left and right audio was unmuted")
+        syslog.syslog(syslog.LOG_INFO, "Left and right audio was unmuted")
 
     def turn_on_ameritron(self):
         """Turn on the Ameritron amplifier."""
         RELAY.relayON(*ameritronRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Ameritron amplifier was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Ameritron amplifier was turned on")
 
     def turn_off_ameritron(self):
         """Turn off the Ameritron amplifier."""
         RELAY.relayOFF(*ameritronRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Ameritron amplifier was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Ameritron amplifier was turned off")
 
     def turn_on_aux_devices(self):
         """Turn on the auxilary devices."""
         RELAY.relayON(*auxDevicesRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Auxilary devices were turned on")
+        syslog.syslog(syslog.LOG_INFO, "Auxilary devices were turned on")
 
     def turn_off_aux_devices(self):
         """Turn off the auxilary devices."""
         RELAY.relayOFF(*auxDevicesRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Auxilary devices were turned off")
+        syslog.syslog(syslog.LOG_INFO, "Auxilary devices were turned off")
 
     def turn_on_thermal_control(self):
         """Turn on the thermal control."""
         RELAY.relayON(*thermalControlRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Thermal control was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Thermal control was turned on")
 
     def turn_off_thermal_control(self):
         """Turn off the thermal control."""
         RELAY.relayOFF(*thermalControlRelay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Thermal control was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Thermal control was turned off")
 
     def turn_on_yaesu_101(self):
         """Turn on the Yaesu 101."""
         RELAY.relayON(*yaesu101Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Yaesu 101 was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 101 was turned on")
 
     def turn_off_yaesu_101(self):
         """Turn off the Yaesu 101."""
         RELAY.relayOFF(*yaesu101Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Yaesu 101 was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 101 was turned off")
 
     def turn_on_icom_7300(self):
         """Turn on the Icom 7300."""
         RELAY.relayON(*icom7300Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Icom 7300 was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Icom 7300 was turned on")
 
     def turn_off_icom_7300(self):
         """Turn off the Icom 7300."""
         RELAY.relayOFF(*icom7300Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Icom 7300 was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Icom 7300 was turned off")
 
     def turn_on_yaesu_7900(self):
         """Turn on the Yaesu 7900."""
         RELAY.relayON(*yaesu7900Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Yaesu 7900 was turned on")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 7900 was turned on")
 
     def turn_off_yaesu_7900(self):
         """Turn off the Yaesu 7900."""
         RELAY.relayOFF(*yaesu7900Relay)
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Yaesu 7900 was turned off")
+        syslog.syslog(syslog.LOG_INFO, "Yaesu 7900 was turned off")
 
     def perform_power_up(self):
         """Power up all the normal systems."""
@@ -554,7 +554,7 @@ class ControlWindow(Gtk.Window):
         
         suppressSounds = False # Play sounds again now that we're done pressing buttons
         self.play_sound(completedSound)
-        syslog.syslog(syslog.LOG_DEBUG, "Completed auto power up")
+        syslog.syslog(syslog.LOG_INFO, "Completed auto power up")
 
     def perform_normal_shutdown(self):
         """Normal Shutdown - turn off all power relays with time delay."""
@@ -595,7 +595,7 @@ class ControlWindow(Gtk.Window):
         time.sleep(0.5)
         self.audioSystemButton.set_active(False)
         
-        syslog.syslog(syslog.LOG_DEBUG, "Completed normal shutdown")
+        syslog.syslog(syslog.LOG_INFO, "Completed normal shutdown")
 
     def perform_full_shutdown(self):
         """Full Shutdown - turn off all power relays with time delay."""
@@ -633,7 +633,7 @@ class ControlWindow(Gtk.Window):
         time.sleep(0.5)
         self.audioSystemButton.set_active(False)
         
-        syslog.syslog(syslog.LOG_DEBUG, "Completed full shutdown")
+        syslog.syslog(syslog.LOG_INFO, "Completed full shutdown")
 
     def perform_full_system_shutdown(self):
         """Full System Shutdown - turn off all power relays with time delay and then computer."""
@@ -671,7 +671,7 @@ class ControlWindow(Gtk.Window):
         time.sleep(0.5)
         self.audioSystemButton.set_active(False)
         
-        syslog.syslog(syslog.LOG_DEBUG, "Completed full system shutdown")
+        syslog.syslog(syslog.LOG_INFO, "Completed full system shutdown")
 
         os.system("sudo halt")
 
