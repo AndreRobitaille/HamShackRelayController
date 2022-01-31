@@ -1,11 +1,14 @@
+/* Main window. */
 window {
   background-color: #144F66;
 }
 
+/* Grid square. Fills in empty spaces where there are no buttons. */
 grid {
   background-color: #144F66;
 }
 
+/* When combined with Gtk Grid, font-size and padding significantly affect automatic button sizing. */
 button {
   background-color: #F2CC8F;
   border-radius: 5px;
@@ -14,6 +17,7 @@ button {
   font-size: 17px;
 }
 
+/* Button when actively pressed/clicked. */
 button:hover:active {
   background-color: #EAB69F;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
@@ -22,6 +26,7 @@ button:hover:active {
   outline: none;
 }
 
+/* Depressed toggle button (on). */
 button:checked {
   background-color: #22A94E;
   -webkit-box-shadow: inset 0px 0px 3px #303030;
@@ -30,11 +35,13 @@ button:checked {
   outline: none;
 }
 
+/* Button that is set to not sensitive. */
 button:disabled {
   background-color: #3D405B;
   border-color: #363636;
 }
 
+/* Make text for disabled button lighter if the button color is dark. */
 button:disabled label {
   color: #9FB4BE;
 }
