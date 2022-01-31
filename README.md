@@ -19,11 +19,14 @@ Requires the following:
 - pygame
 - pi-plates
 
-Commands:<br />
-apt install gtk3 python3-gi python-pip<br />
-(change to script directory)<br />
-pip3 install pygame<br />
-pip3 install pi-plates
+Commands:
+
+    apt install gtk3 python3-gi python-pip
+
+Change to the script directory...
+
+    pip3 install pygame
+    pip3 install pi-plates
 
 Making the app autostart
 --------------
@@ -32,14 +35,13 @@ Making the app autostart
 
 IDE suggestions:
 --------------
-Python beginners:<br />
-Thonny IDE<br />
-https://thonny.org/<br />
-apt install thonny
+Thonny IDE (https://thonny.org/)
 
-VIM<br />
-https://www.vim.org/<br />
-apt install vim
+    apt install thonny
+
+VIM (https://www.vim.org/)
+
+    apt install vim
 
 Visual Studio Code (add python extension from Microsoft)<br />
 https://code.visualstudio.com/<br />
@@ -53,7 +55,8 @@ View Logs
 Logs are sent to syslog, so on Raspberry Pi OS they'll be in /var/log/messages
 
 To follow it while you're using the app, use the following, but don't leave that open excessively. Ctrl-C to quit.
-tail -f /var/log/messages
+
+    tail -f /var/log/messages
 
 Change Colors and Sizes
 --------------
@@ -64,7 +67,7 @@ Disable a Button
 In the ControlWindow class, find the block with the button you want to disable. Add the following code to the bottom of that block, changing the generic parts to match the actual button name and "off" method:
 
     self.devicenameButton.set_sensitive(False)
-    self.turn_off_devicename()`
+    self.turn_off_devicename()
 
 If the device is part of the perform_power_up method, be sure to comment out its lines of code.
 
